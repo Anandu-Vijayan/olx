@@ -8,9 +8,15 @@ function Login() {
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
   const {firebase}=useContext(FirebaseContext)
+  const [error,setError] = useState('')
   const history=useHistory()
   const handleLogin=(e)=>{
     e.preventDefault()
+    if (email.length === 0 && password.length===0 ) {
+      setError("true")
+    }
+    if(email.length !==0 && password.length !==0 ){
+
       firebase.auth().signInWithEmailAndPassword(email,password).then((response)=>{
         history.push('/')
         console.log(response);
@@ -20,6 +26,7 @@ function Login() {
       })
     
   }
+}
   return (
     <div>
       <div className="loginParentDiv">
@@ -37,6 +44,8 @@ function Login() {
             defaultValue="John"
           />
           <br />
+          <span>{error && email.length <= 0 ? 
+               <label style={{ color: "red" }} >email cannot be empty </label> : ""}</span><br/>
           <label htmlFor="lname">Password</label>
           <br />
           <input
@@ -49,10 +58,12 @@ function Login() {
             defaultValue=""
           />
           <br />
+          <span>{error && password.length <= 0 ? 
+               <label style={{ color: "red" }} >Password cannot be empty </label> : ""}</span><br/>
           <br />
           <button>Login</button>
         </form>
-        <a href='/#'>Signup</a>
+        <a href='' onClick={()=>{history.push('/signup')}} >Signup</a>
       </div>
     </div>
   );

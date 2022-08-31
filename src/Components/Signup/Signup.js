@@ -1,6 +1,4 @@
 import React,{useState,useContext} from 'react';
-
-
 import Logo from '../../olx-logo.png';
 import { FirebaseContext } from '../../store/FirebaseContext';
 import {useHistory} from 'react-router-dom'
@@ -12,9 +10,16 @@ export default function Signup() {
   const [email,setEmail]=useState('');
   const [phone,setPhone]=useState('');
   const [password,setPassword]=useState('');
+  const [error,setError] = useState('')
   const {firebase}=useContext(FirebaseContext)
   const handleSubmit=(e)=>{
     e.preventDefault()
+    if (username.length === 0 && phone.length===0 &&  email.length === 0 && password.length===0 ) {
+      setError("true")
+    }
+
+    if(username.length !== 0 && phone.length !==0 && email.length !==0 && password.length !==0 ){
+
     firebase.auth().createUserWithEmailAndPassword(email,password).then((result)=>{
       result.user.updateProfile({displayName:username}).then(()=>{
         firebase.firestore().collection('users').add({
@@ -28,6 +33,7 @@ export default function Signup() {
 
       })
     })
+  }
 
 
 
@@ -49,6 +55,8 @@ export default function Signup() {
             defaultValue="John"
           />
           <br />
+          <span>{error && username.length <= 0 ? 
+               <label style={{ color: "red" }} >name cannot be empty </label> : ""}</span><br/>
           <label htmlFor="fname">Email</label>
           <br />
           <input
@@ -61,6 +69,8 @@ export default function Signup() {
             defaultValue="John"
           />
           <br />
+          <span>{error && email.length <= 0 ? 
+               <label style={{ color: "red" }} >email cannot be empty </label> : ""}</span><br/>
           <label htmlFor="lname">Phone</label>
           <br />
           <input
@@ -73,6 +83,8 @@ export default function Signup() {
             defaultValue="Doe"
           />
           <br />
+          <span>{error && phone.length <= 0 ? 
+               <label style={{ color: "red" }} >Phone cannot be empty </label> : ""}</span><br/>
           <label htmlFor="lname">Password</label>
           <br />
           <input
@@ -85,10 +97,12 @@ export default function Signup() {
             defaultValue="Doe"
           />
           <br />
+          <span>{error && password.length <= 0 ? 
+               <label style={{ color: "red" }} >Password cannot be empty </label> : ""}</span><br/>
           <br />
           <button>Signup</button>
         </form>
-        <a href='/#'>Login</a>
+        <a href='' onClick={()=>{history.push('/login')}} >Login</a>
       </div>
     </div>
   );
